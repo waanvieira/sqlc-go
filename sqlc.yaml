@@ -1,0 +1,18 @@
+version: "2"
+sql:
+- schema: "sql/migrations" # indica onde está as nossas migrations
+  queries: "sql/queries" # path de onde está nossas queries, no caso na pasta sql a pasta queries
+  engine: "mysql" # O banco de dados, nesse caso Mysql, até o momento o SQLC só tem suporte para Mysql, Postgree e SQLITE
+  # Generate, iremos indicar que é para a linguagem GO, o SQLC tem suporte para outras linguagens
+  gen:
+    go:
+      package: "db"
+      out: "internal/db" #Saída dos comando
+      # Esse parte é para o SQLC entender que o campo decimal vai ser entendido como float64
+      # Por padrão quando declaramos um campo como decimal ele vai entender como string, na model vai entender como string e como go
+      # é fortemente tipado vai dar erro, não vai deixar salvar o valor como string, adicionando o overrides ele vai converter e entender
+      # aqui estamos dizendo que o campo db_type:decimal o tipo de campo decimal deve ser do tipo go_type: float64, poderiamos mudar isso para 
+      # outro formato, seria só adicionar aqui
+      overrides:
+        - db_type: "decimal" # tipo decimal do banco de dados, tudo que for do tipo decimal do banco de dados vai se tornar o que definirmos no go_type
+          go_type: "float64" # aqui definimos o tipo que o db_type vai ser quando for do tipo decimal
